@@ -1,0 +1,6 @@
+PEPE372638MA6,123456,Empleado,Norte,Pedro,Perez,calle 23,562738253672,pedroperez@gmail.com,holamundo
+CAHD729356SD6,123893,Empleado,Norte,Carlos,Sanchez,calle 45,5628372512,carsanchez@gmail.com,libretaroja
+CEPA68263SN8,123637,Empleado,Centro,Cecilia,Palacios,calle 38,5628372893,palacios@gmail.com,bolsademano
+ERQT638934ND3,123684,Empleado,Centro,Erick,Quintana,calle 37,5638478394,erickquin@gmail.com,almohadafria
+JEAL738493JD8,123828,Empleado,Sur,Jessica,Alcantar,calle 36,5627883323,jessalcantar@gmail.com,tacosalpastor
+MILP638942MD2,123489,Empleado,Sur,Miriam,Lopez,calle 73,563873748383,miriamlpz@gmail.com,cocacola

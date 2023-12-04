@@ -1,0 +1,3 @@
+MAZA562435HS6,456352,Gerente,Norte,Mario,Zarate,calle 90,5625378354,mariozar@gmail.com,24demarzo
+SOPE563489AG5,456738,Gerente,Sur,Sofia,Pedraza,calle 56,536243748,sofiaped@gmail.com,florrosa
+ESCO673827AV6,456243,Gerente,Centro,Ester,Contreras,calle 78,5623783678,estercon@gmail.com,perritobonito
