@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -286,4 +287,51 @@ public class Empleado extends Persona {
             System.out.println("No se encontró ninguna solicitud");
                 }*/
     }
+
+
+    public static void crearOrdenResurtido() {
+        Scanner scan = new Scanner(System.in);
+
+        // Solicitar al usuario la sucursal para la orden de resurtido
+        System.out.println("Ingrese la sucursal para la orden de resurtido (norte/sur/centro):");
+        String sucursal = scan.nextLine();
+
+        // Obtener la lista de productos desde el archivo
+        List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
+
+        // Mostrar la lista de productos disponibles
+        System.out.println("Productos Disponibles para Resurtido:");
+
+        for (Producto producto : listaProductos) {
+            int stockActual = Producto.obtenerStockSegunSucursal(producto, sucursal);
+            System.out.println("Nombre: " + producto.getNombre() + ", Stock en " + sucursal + ": " + stockActual);
+        }
+
+        // Solicitar al usuario los productos que desea resurtir y la cantidad
+        List<OrdenDeSurtido> listaOrdenes = new ArrayList<>();
+
+        while (true) {
+            System.out.println("\nIngrese el nombre del producto para resurtir (o 's' para salir):");
+            String nombreProducto = scan.nextLine();
+
+            if (nombreProducto.equalsIgnoreCase("s")) {
+                break;
+            }
+
+            System.out.println("Ingrese la cantidad a resurtir:");
+            int cantidad = Integer.parseInt(scan.nextLine());
+
+            OrdenDeSurtido orden = new OrdenDeSurtido(sucursal, nombreProducto, cantidad);
+            listaOrdenes.add(orden);
+
+            System.out.println("Orden de resurtido registrada para " + nombreProducto + " en " + sucursal);
+        }
+
+        // Guardar la lista de órdenes de surtido en un archivo
+        OrdenDeSurtido.guardarOrdenesSurtidoEnArchivo(listaOrdenes);
+    }
+
 }
+
+
+
