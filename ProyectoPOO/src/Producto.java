@@ -81,10 +81,11 @@ public class Producto {
         this.stockSur = stockSur;
     }
     
+
     private static final String ARCHIVO_PRODUCTOS = "Productos.txt";
     private static final String DELIMITADOR = ",";
 
-     public static List<Producto> leerProductosDesdeArchivo() {
+    public static List<Producto> leerProductosDesdeArchivo() {
         List<Producto> listaProductos = new ArrayList<>();
         Path archivoPath = Paths.get(ARCHIVO_PRODUCTOS);
 
@@ -92,14 +93,14 @@ public class Producto {
             try {
                 Files.createFile(archivoPath);
             } catch (IOException e) {
-                e.printStackTrace();
+               
             }
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(ARCHIVO_PRODUCTOS))) {
             String linea;
             while ((linea = br.readLine()) != null) {
-                String[] partes = linea.split(",");
+                String[] partes = linea.split(DELIMITADOR.trim()); 
                 if (partes.length == 7) {
                     Producto producto = new Producto(partes[0], Integer.parseInt(partes[1]), Double.parseDouble(partes[2]),
                             partes[3], Integer.parseInt(partes[4]), Integer.parseInt(partes[5]), Integer.parseInt(partes[6]));
@@ -116,13 +117,13 @@ public class Producto {
     }
 
     public static void guardarProductosEnArchivo(List<Producto> listaProductos) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARCHIVO_PRODUCTOS, true))) {
+        try (PrintWriter writer = new PrintWriter(ARCHIVO_PRODUCTOS)) {
             for (Producto producto : listaProductos) {
-                bw.write(String.format("%s,%d,%f,%s,%d,%d,%d%n",
+                writer.println(String.format("%s" + DELIMITADOR + "%d" + DELIMITADOR + "%.6f" + DELIMITADOR + "%s" + DELIMITADOR + "%d" + DELIMITADOR + "%d" + DELIMITADOR + "%d",
                         producto.getNombre(), producto.getCodigoProducto(), producto.getPrecio(),
                         producto.getCategoria(), producto.getStockCentro(), producto.getStockNorte(), producto.getStockSur()));
             }
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -236,21 +237,31 @@ public static void buscarProducto(Carrito carrito, String sucursalCliente) {
 }
 
 // Método para obtener el stock según la sucursal
-private static int obtenerStockSegunSucursal(Producto producto, String sucursal) {
-    // Devuelve el stock correspondiente a la sucursal del producto
-    switch (sucursal.toLowerCase()) {
-        case "norte":
-            return producto.getStockNorte();
-        case "sur":
-            return producto.getStockSur();
-        case "centro":
-            return producto.getStockCentro();
-        default:
-            return 0; // Manejar una sucursal no válida como 0 stock
+    public static int obtenerStockSegunSucursal(Producto producto, String sucursal) {
+        // Devuelve el stock correspondiente a la sucursal del producto
+        switch (sucursal.toLowerCase()) {
+            case "norte":
+                return producto.getStockNorte();
+            case "sur":
+                return producto.getStockSur();
+            case "centro":
+                return producto.getStockCentro();
+            default:
+                return 0; // Manejar una sucursal no válida como 0 stock
+        }
     }
-}
+    
+    public static Producto buscarProductoEnSucursal(String nombreProducto, String sucursal) {
+        List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
 
+        for (Producto producto : listaProductos) {
+            if (producto.getNombre().equalsIgnoreCase(nombreProducto)) {
+                return producto;
+            }
+        }
 
+        return null;
+    }
 
 
     

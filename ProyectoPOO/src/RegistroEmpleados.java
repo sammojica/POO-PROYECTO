@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,9 +49,9 @@ public class RegistroEmpleados {
         return listaEmpleados;
     }
 
-    public static void guardarEmpleadosEnArchivo(List<Empleado> listaEmpleados) {
-        try (PrintWriter writer = new PrintWriter(ARCHIVO_EMPLEADOS)) {
-            for (Empleado empleado : listaEmpleados) {
+public static void guardarEmpleadosEnArchivo(List<Empleado> listaEmpleados) {
+    try (PrintWriter writer = new PrintWriter(ARCHIVO_EMPLEADOS)) {
+        for (Empleado empleado : listaEmpleados) {
             writer.println(String.format("%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s",
                     empleado.getRFC(), empleado.getNumTrabajador(), empleado.getTipoTrabajador(),
                     empleado.getSucursal(), empleado.getNombre(), empleado.getApellidos(),
