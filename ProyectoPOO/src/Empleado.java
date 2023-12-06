@@ -69,6 +69,7 @@ public class Empleado extends Persona {
                     actualizarDatosPersonalesEmpleado(empleado);
                     break;
                 case 3:
+                    crearOrdenResurtido();
                     break;
                 case 4:
                     System.out.println("Cerrando sesión...\n\n");
