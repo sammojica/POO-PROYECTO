@@ -1,121 +1,147 @@
-
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class RegistroClientes {
 
     private static final String ARCHIVO_CLIENTES = "Clientes.txt";
+    private static final String DELIMITADOR = ",";
 
-    // Método para leer la lista de usuarios desde el archivo
-    public static List<Usuario> leerUsuariosDesdeArchivo() {
+    public static List<Usuario> leerClientesDesdeArchivo() {
         List<Usuario> listaUsuarios = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(ARCHIVO_CLIENTES))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                // Verificar si la línea comienza con "Cliente"
-                if (linea.startsWith("Cliente")) {
-                    continue;  // Ignorar esta línea y pasar a la siguiente
-                }
+        try {
+            Path archivoPath = Paths.get(ARCHIVO_CLIENTES);
 
-                // Dividir la línea en partes según algún delimitador (por ejemplo, coma)
-                String[] partes = linea.split(",");
-                // Crear un nuevo usuario y agregarlo a la lista
-                Usuario usuario = new Usuario(Integer.parseInt(partes[0]), partes[1], Double.parseDouble(partes[2]), Integer.parseInt(partes[3]),
-                        partes[4], new Carrito(), new ArrayList<>(), partes[5], partes[6], partes[7], partes[8], partes[9], partes[10]);
-                listaUsuarios.add(usuario);
+            if (!Files.exists(archivoPath)) {
+                Files.createFile(archivoPath);
             }
-        } catch (FileNotFoundException e) {
-            // El archivo no existe, puedes crearlo si es necesario
 
+            try (BufferedReader br = new BufferedReader(new FileReader(archivoPath.toFile()))) {
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    Usuario usuario = Usuario.fromString(linea);
+                    listaUsuarios.add(usuario);
+                }
+            }
         } catch (IOException e) {
-            e.printStackTrace();
         }
 
         return listaUsuarios;
     }
 
-    public static void guardarUsuariosEnArchivo(List<Usuario> listaUsuarios) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARCHIVO_CLIENTES, true))) {
-            for (Usuario usuario : listaUsuarios) {
-                // Formatear el usuario como una línea y escribirlo en el archivo sin el prefijo "Cliente"
-                bw.write(String.format("%d,%s,%f,%d,%s,%s,%s,%s,%s,%s%n",
-                        usuario.getCodigoPostal(), usuario.getNombreUsuario(), usuario.getPuntos(), usuario.getNivel(),
-                        usuario.getNombre(), usuario.getApellidos(), usuario.getDireccion(), usuario.getTelefono(),
-                        usuario.getCorreoElectronico(), usuario.getContraseña()));
+    public static void guardarClientesEnArchivo(List<Usuario> listaUsuarios) {
+        try {
+            List<Usuario> usuariosExistente = leerClientesDesdeArchivo();
+            usuariosExistente.addAll(listaUsuarios);
+
+            // Eliminar duplicados por nombre de usuario
+            Map<String, Usuario> usuarioMap = new LinkedHashMap<>();
+            for (Usuario usuario : usuariosExistente) {
+                usuarioMap.put(usuario.getNombreUsuario(), usuario);
             }
+
+            // Construir la lista sin duplicados
+            List<Usuario> listaSinDuplicados = new ArrayList<>(usuarioMap.values());
+
+            List<String> lines = new ArrayList<>();
+            for (Usuario usuario : listaSinDuplicados) {
+                lines.add(usuario.toString());
+            }
+
+            Files.write(Paths.get(ARCHIVO_CLIENTES), lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public static void registrarCliente(Usuario usuario) {
+        List<Usuario> listaClientes = new ArrayList<>(leerClientesDesdeArchivo());
 
-    // Método para registrar un nuevo usuario
-    public static void registrarUsuario(Usuario usuario) {
-        List<Usuario> listaUsuarios = leerUsuariosDesdeArchivo();
+        Map<Integer, Usuario> linkedHashMap = new LinkedHashMap<>();
+        for (Usuario u : listaClientes) {
+            linkedHashMap.put(u.getCodigoPostal(), u);
+        }
+        linkedHashMap.put(usuario.getCodigoPostal(), usuario);
 
-        // Agregar el nuevo usuario a la lista
-        listaUsuarios.add(usuario);
+        listaClientes = new ArrayList<>(linkedHashMap.values());
 
-        // Guardar la lista actualizada en el archivo
-        guardarUsuariosEnArchivo(listaUsuarios);
+        guardarClientesEnArchivo(listaClientes);
     }
 
     public static void main() {
-    Scanner scan = new Scanner(System.in);
-    System.out.println("Ingrese un nombre de usuario (o 's' para salir):");
-    String usuariotemp = scan.nextLine();
-    if (usuariotemp.equalsIgnoreCase("s")) {
-        System.out.println("Saliendo del registro...");
-        return; // Salir del programa o realizar alguna acción de salida
-    }
-    List<Usuario> usuariosRegistrados = leerUsuariosDesdeArchivo();
-    boolean nombreUsuarioExistente = false;
-    do {
-        for (Usuario usuario : usuariosRegistrados) {
-            if (usuario.getNombreUsuario().equals(usuariotemp)) {
-                // El nombre de usuario ya existe
-                nombreUsuarioExistente = true;
-                break;
-            }
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Ingrese un nombre de usuario (o 's' para salir):");
+        String usuariotemp = scan.nextLine();
+        if (usuariotemp.equalsIgnoreCase("s")) {
+            System.out.println("Saliendo del registro...");
+            return; // Salir del programa o realizar alguna acción de salida
         }
-        if (nombreUsuarioExistente) {
-            System.out.println("El nombre de usuario ya existe. ¿Desea intentar con otro? (s/n)");
-            String respuesta = scan.nextLine().toLowerCase();
-            if (respuesta.equals("s")) {
-                System.out.println("Ingrese un nuevo nombre de usuario:");
-                usuariotemp = scan.nextLine();
-                nombreUsuarioExistente = false;
-            } else if (respuesta.equals("n")) {
-                System.out.println("Saliendo del registro...");
-                return; // Salir del programa o realizar alguna acción de salida
-            } else {
-                System.out.println("Opción no válida. Por favor, responda con 's' o 'n'.");
+
+        List<Usuario> usuariosRegistrados = leerClientesDesdeArchivo();
+        boolean nombreUsuarioExistente = false;
+
+        do {
+            for (Usuario usuario : usuariosRegistrados) {
+                if (usuario.getNombreUsuario().equals(usuariotemp)) {
+                    // El nombre de usuario ya existe
+                    nombreUsuarioExistente = true;
+                    break;
+                }
             }
-        }
-    } while (nombreUsuarioExistente);
-    // Continuar con el registro del nuevo usuario
-    System.out.println("Nombre de usuario válido. Puede continuar con el registro.");  
-    // Nueva solicitud para la sucursal
-    System.out.println("Ingrese la sucursal en la que comprará('norte', 'sur' o 'centro'):");
-    String sucursal = scan.nextLine().toLowerCase();
-    // Validar que la sucursal ingresada sea válida
-    if (!sucursal.equals("norte") && !sucursal.equals("sur") && !sucursal.equals("centro")) {
-        System.out.println("Sucursal no válida. Saliendo del registro...");
-        return; // Salir del programa o realizar alguna acción de salida
-    }
-    System.out.println("Ingrese una contraseña:");
-    String contraseña = scan.nextLine();
+
+            if (nombreUsuarioExistente) {
+                System.out.println("El nombre de usuario ya existe. ¿Desea intentar con otro? (s/n)");
+                String respuesta = scan.nextLine().toLowerCase();
+
+                if (respuesta.equals("s")) {
+                    System.out.println("Ingrese un nuevo nombre de usuario:");
+                    usuariotemp = scan.nextLine();
+                    nombreUsuarioExistente = false;
+                } else if (respuesta.equals("n")) {
+                    System.out.println("Saliendo del registro...");
+                    return; // Salir del programa o realizar alguna acción de salida
+                } else {
+                    System.out.println("Opción no válida. Por favor, responda con 's' o 'n'.");
+                }
+            }
+        } while (nombreUsuarioExistente);
+
+        // Continuar con el registro del nuevo usuario
+        System.out.println("Nombre de usuario válido. Puede continuar con el registro.");
+
+        // Nueva solicitud para la sucursal
+        String sucursal;
+        do {
+            System.out.println("Ingrese la sucursal en la que comprará ('norte', 'sur' o 'centro'):");
+            sucursal = scan.nextLine().toLowerCase();
+            // Validar que la sucursal ingresada sea válida
+            if (!sucursal.equals("norte") && !sucursal.equals("sur") && !sucursal.equals("centro")) {
+                System.out.println("Sucursal no válida. Intente de nuevo.");
+            }
+        } while (!sucursal.equals("norte") && !sucursal.equals("sur") && !sucursal.equals("centro"));
+
+        // Resto del código
+        System.out.println("Ingrese una contraseña:");
+        String contraseña = scan.nextLine();
+
         if (contraseña.length() < 8) {
             System.out.println("La contraseña debe tener al menos 8 caracteres. Intente de nuevo.");
+
             // Bucle para pedir una nueva contraseña hasta que sea válida
             while (contraseña.length() < 8) {
                 System.out.println("Ingrese una contraseña válida (al menos 8 caracteres):");
                 contraseña = scan.nextLine();
             }
         }
+
         System.out.println("Ingrese su nombre:");
         String nombre = scan.nextLine();
         System.out.println("Ingrese su apellido:");
@@ -131,63 +157,88 @@ public class RegistroClientes {
         String numero = scan.nextLine();
 
         Usuario nuevoUsuario1 = new Usuario(codigoP, usuariotemp, 0, 0, sucursal, null, null, nombre, apellido, direccion, numero, correoE, contraseña);
-        registrarUsuario(nuevoUsuario1);
-    }
-    
-    public static void actualizarDatosPersonales(Usuario usuario) {
-    Scanner scan = new Scanner(System.in);
-
-    // Mostrar los datos actuales del usuario
-    System.out.println("Datos actuales:");
-    System.out.println("Nombre de usuario: " + usuario.getNombreUsuario());
-    System.out.println("Nombre: " + usuario.getNombre());
-    System.out.println("Apellido: " + usuario.getApellidos());
-    System.out.println("Correo electrónico: " + usuario.getCorreoElectronico());
-    System.out.println("Dirección: " + usuario.getDireccion());
-    System.out.println("Código postal: " + usuario.getCodigoPostal());
-    System.out.println("Número de teléfono: " + usuario.getTelefono());
-
-    // Pedir al usuario que elija qué campo desea actualizar
-    System.out.println("Seleccione el campo que desea actualizar (1-Nombre, 2-Apellido, 3-Correo, 4-Dirección, 5-Código Postal, 6-Teléfono, 0-Salir):");
-    int opcion = scan.nextInt();
-    scan.nextLine();  // Consumir la nueva línea pendiente después del nextInt
-
-    switch (opcion) {
-        case 1:
-            System.out.println("Ingrese el nuevo nombre:");
-            usuario.setNombre(scan.nextLine());
-            break;
-        case 2:
-            System.out.println("Ingrese el nuevo apellido:");
-            usuario.setApellidos(scan.nextLine());
-            break;
-        case 3:
-            System.out.println("Ingrese el nuevo correo electrónico:");
-            usuario.setCorreoElectronico(scan.nextLine());
-            break;
-        case 4:
-            System.out.println("Ingrese la nueva dirección:");
-            usuario.setDireccion(scan.nextLine());
-            break;
-        case 5:
-            System.out.println("Ingrese el nuevo código postal:");
-            usuario.setCodigoPostal(scan.nextInt());
-            scan.nextLine();  // Consumir la nueva línea pendiente después del nextInt
-            break;
-        case 6:
-            System.out.println("Ingrese el nuevo número de teléfono:");
-            usuario.setTelefono(scan.nextLine());
-            break;
-        case 0:
-            System.out.println("Saliendo de la actualización de datos...");
-            break;
-        default:
-            System.out.println("Opción no válida.");
+        registrarCliente(nuevoUsuario1);
     }
 
-    // Guardar la lista actualizada en el archivo
-    guardarUsuariosEnArchivo(leerUsuariosDesdeArchivo());
-}
+    public static void actualizarDatosPersonales(String nombreUsuario) {
+        List<Usuario> listaClientes = new ArrayList<>(leerClientesDesdeArchivo());
 
-    
+        boolean usuarioEncontrado = false;
+        for (Usuario usuario : listaClientes) {
+            if (usuario.getNombreUsuario().equals(nombreUsuario)) {
+                // Mostrar los datos actuales del usuario
+                System.out.println("\n\nDatos actuales del usuario:");
+                System.out.println("Nombre: " + usuario.getNombre());
+                System.out.println("Apellidos: " + usuario.getApellidos());
+                System.out.println("Dirección: " + usuario.getDireccion());
+                System.out.println("Correo Electrónico: " + usuario.getCorreoElectronico());
+                System.out.println("Teléfono: " + usuario.getTelefono());
+                System.out.println("Código postal: " + usuario.getCodigoPostal());
+
+                // Solicitar al usuario qué campo desea actualizar
+                Scanner scan = new Scanner(System.in);
+                System.out.println("Seleccione el campo que desea actualizar:");
+                System.out.println("1. Nombre");
+                System.out.println("2. Apellido");
+                System.out.println("3. Dirección");
+                System.out.println("4. Correo Electrónico");
+                System.out.println("5. Número de Teléfono");
+                System.out.println("6. Código postal:");
+                System.out.println("0. Cancelar");
+
+                int opcion = scan.nextInt();
+                scan.nextLine(); // Consumir la nueva línea pendiente después del nextInt
+
+                switch (opcion) {
+                    case 1:
+                        System.out.println("Ingrese el nuevo nombre:");
+                        String nuevoNombre = scan.nextLine();
+                        usuario.setNombre(nuevoNombre);
+                        break;
+                    case 2:
+                        System.out.println("Ingrese el nuevo apellido:");
+                        String nuevoApellido = scan.nextLine();
+                        usuario.setApellidos(nuevoApellido);
+                        break;
+                    case 3:
+                        System.out.println("Ingrese la nueva dirección:");
+                        String nuevaDireccion = scan.nextLine();
+                        usuario.setDireccion(nuevaDireccion);
+                        break;
+                    case 4:
+                        System.out.println("Ingrese el nuevo correo electrónico:");
+                        String nuevoCorreo = scan.nextLine();
+                        usuario.setCorreoElectronico(nuevoCorreo);
+                        break;
+                    case 5:
+                        System.out.println("Ingrese el nuevo número de teléfono:");
+                        String nuevoNumero = scan.nextLine();
+                        usuario.setTelefono(nuevoNumero);
+                        break;
+                    case 6:
+                        System.out.println("Ingrese el nuevo código postal");
+                        int nuevoCP = scan.nextInt();
+                        usuario.setCodigoPostal(nuevoCP);
+                        break;
+                    case 0:
+                        System.out.println("Operación cancelada. No se realizaron cambios.");
+                        return;
+                    default:
+                        System.out.println("Opción no válida. No se realizaron cambios.");
+                        return;
+                }
+
+                System.out.println("Datos actualizados correctamente.");
+                usuarioEncontrado = true;
+                break;
+            }
+        }
+
+        if (!usuarioEncontrado) {
+            System.out.println("Usuario no encontrado. No se pueden actualizar los datos.");
+        } else {
+            // Actualizar el archivo con los nuevos datos
+            guardarClientesEnArchivo(listaClientes);
+        }
+    }
 }
