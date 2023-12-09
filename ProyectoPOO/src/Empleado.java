@@ -9,6 +9,7 @@ public class Empleado extends Persona {
     public String numTrabajador;
     public String tipoTrabajador;
     public String Sucursal;
+    private List<Solicitud> solicitudesPendientes;
 
     public Empleado(String RFC, String numTrabajador, String tipoTrabajador, String Sucursal, String nombre, String apellidos, String direccion, String telefono, String correoElectronico, String contraseña) {
         super(nombre, apellidos, direccion, telefono, correoElectronico, contraseña);
@@ -49,13 +50,17 @@ public class Empleado extends Persona {
     public void setSucursal(String Sucursal) {
         this.Sucursal = Sucursal;
     }
+    
+    public List<Solicitud> getSolicitudesPendientes() {
+        return solicitudesPendientes;
+    }
 
     public static void menu(Empleado empleado) {
         Scanner scan = new Scanner(System.in);
         int op;
 
         do {
-            System.out.println("\n\nBienvenido empleado.");
+            System.out.println("\n\nBienvenido empleado " +empleado.getApellidos()+ " "+empleado.getNombre());
             System.out.println("1. Actualizar stock.");
             System.out.println("2. Actualizar información personal.");
             System.out.println("3. Crear orden de resurtido de productos.");
@@ -63,7 +68,7 @@ public class Empleado extends Persona {
             op = scan.nextInt();
             switch (op) {
                 case 1:
-                    actualizarStock();
+                    empleado.actualizarStock();
                     break;
                 case 2:
                     actualizarDatosPersonalesEmpleado(empleado);
@@ -226,67 +231,71 @@ public class Empleado extends Persona {
       return null;
   }
 
-    public static void actualizarStock() {
+    public void actualizarStock() {
         Scanner scan = new Scanner(System.in);
-        //if (SolicitudGerenteActualizarStock());{
-            // Actualizar el stock según la sucursal especificada
-            
-            // Solicitar al usuario el nombre del producto y la sucursal
-            System.out.println("Ingrese el nombre del producto:");
-            String nombreProducto = scan.nextLine();
+        
+        RegistroSolicitud registroSolicitud = new RegistroSolicitud();
+        Solicitud ultimaSolicitud = registroSolicitud.crearSolicitud(scan, this.getNumTrabajador(),false);
+        
+        List<Solicitud> solicitudes = RegistroSolicitud.leerSolicitudesDesdeArchivo();
+        
+        if (!solicitudes.isEmpty()) {
+            if(ultimaSolicitud.getEstado() == Solicitud.EstadoSolicitud.APROBADA){
+                System.out.println("Ingrese el nombre del producto:");
+                String nombreProducto = scan.nextLine();
 
-            System.out.println("Ingrese la sucursal (norte/sur/centro):");
-            String sucursal = scan.nextLine();
+                System.out.println("Ingrese la sucursal (norte/sur/centro):");
+                String sucursal = scan.nextLine();
 
-            // Buscar el producto en la sucursal especificada
-            Producto producto = Producto.buscarProductoEnSucursal(nombreProducto, sucursal);
+                // Buscar el producto en la sucursal especificada
+                Producto producto = Producto.buscarProductoEnSucursal(nombreProducto, sucursal);
 
-            if (producto == null) {
-                System.out.println("No se encontró el producto en la sucursal especificada.");
-                return;
-            }
-
-            // Mostrar la cantidad actual de productos en la sucursal
-            int stockActual = Producto.obtenerStockSegunSucursal(producto, sucursal);
-            System.out.println("Cantidad actual de productos en la sucursal " + sucursal + ": " + stockActual);
-
-            // Solicitar al usuario la nueva cantidad de stock
-            System.out.println("Ingrese la nueva cantidad de stock:");
-            int nuevaCantidad = scan.nextInt();
-
-            // Actualizar el stock según la sucursal especificada
-            switch (sucursal.toLowerCase()) {
-                case "norte":
-                    producto.setStockNorte(nuevaCantidad);
-                    break;
-                case "sur":
-                    producto.setStockSur(nuevaCantidad);
-                    break;
-                case "centro":
-                    producto.setStockCentro(nuevaCantidad);
-                    break;
-                default:
-                    System.out.println("Sucursal no válida. No se actualizó el stock.");
-                    return;
-            }
-
-            // Guardar la lista actualizada en el archivo
-            List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
-            for (int i = 0; i < listaProductos.size(); i++) {
-                if (listaProductos.get(i).getNombre().equalsIgnoreCase(nombreProducto)) {
-                    listaProductos.set(i, producto);
-                    Producto.guardarProductosEnArchivo(listaProductos);
-                    System.out.println("Stock actualizado correctamente en la sucursal " + sucursal + ".");
+                if (producto == null) {
+                    System.out.println("No se encontró el producto en la sucursal especificada.");
                     return;
                 }
-            }
 
-            // Mensaje en caso de que el producto no se encuentre en la lista
-            System.out.println("Error al actualizar el stock. El producto no se encuentra en la lista.");
-        /*}
-        else{
+                // Mostrar la cantidad actual de productos en la sucursal
+                int stockActual = Producto.obtenerStockSegunSucursal(producto, sucursal);
+                System.out.println("Cantidad actual de productos en la sucursal " + sucursal + ": " + stockActual);
+
+                // Solicitar al usuario la nueva cantidad de stock
+                System.out.println("Ingrese la nueva cantidad de stock:");
+                int nuevaCantidad = scan.nextInt();
+
+                // Actualizar el stock según la sucursal especificada
+                switch (sucursal.toLowerCase()) {
+                    case "norte":
+                        producto.setStockNorte(nuevaCantidad);
+                        break;
+                    case "sur":
+                        producto.setStockSur(nuevaCantidad);
+                        break;
+                    case "centro":
+                        producto.setStockCentro(nuevaCantidad);
+                        break;
+                    default:
+                        System.out.println("Sucursal no válida. No se actualizó el stock.");
+                        return;
+                }
+
+                // Guardar la lista actualizada en el archivo
+                List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
+                for (int i = 0; i < listaProductos.size(); i++) {
+                    if (listaProductos.get(i).getNombre().equalsIgnoreCase(nombreProducto)) {
+                        listaProductos.set(i, producto);
+                        Producto.guardarProductosEnArchivo(listaProductos);
+                        System.out.println("Stock actualizado correctamente en la sucursal " + sucursal + ".");
+                        return;
+                    }
+                    
+                    System.out.println("Error al actualizar el stock. El producto no se encuentra en la lista.");
+                }
+            }else{
+                System.out.println("La solicitud no está aprobada. No se puede actualizar el stock.");
+            }
+        }else
             System.out.println("No se encontró ninguna solicitud");
-                }*/
     }
 
 
@@ -331,6 +340,8 @@ public class Empleado extends Persona {
         // Guardar la lista de órdenes de surtido en un archivo
         OrdenDeSurtido.guardarOrdenesSurtidoEnArchivo(listaOrdenes);
     }
+    
+    
 
 }
 

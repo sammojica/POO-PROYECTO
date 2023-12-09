@@ -10,47 +10,46 @@ public class RegistroClientes {
 
     // Método para leer la lista de usuarios desde el archivo
     public static List<Usuario> leerUsuariosDesdeArchivo() {
-    List<Usuario> listaUsuarios = new ArrayList<>();
+        List<Usuario> listaUsuarios = new ArrayList<>();
 
-    try (BufferedReader br = new BufferedReader(new FileReader(ARCHIVO_CLIENTES))) {
-        String linea;
-        while ((linea = br.readLine()) != null) {
-            // Verificar si la línea comienza con "Cliente"
-            if (linea.startsWith("Cliente")) {
-                continue;  // Ignorar esta línea y pasar a la siguiente
+        try (BufferedReader br = new BufferedReader(new FileReader(ARCHIVO_CLIENTES))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                // Verificar si la línea comienza con "Cliente"
+                if (linea.startsWith("Cliente")) {
+                    continue;  // Ignorar esta línea y pasar a la siguiente
+                }
+
+                // Dividir la línea en partes según algún delimitador (por ejemplo, coma)
+                String[] partes = linea.split(",");
+                // Crear un nuevo usuario y agregarlo a la lista
+                Usuario usuario = new Usuario(Integer.parseInt(partes[0]), partes[1], Double.parseDouble(partes[2]), Integer.parseInt(partes[3]),
+                        partes[4], new Carrito(), new ArrayList<>(), partes[5], partes[6], partes[7], partes[8], partes[9], partes[10]);
+                listaUsuarios.add(usuario);
             }
+        } catch (FileNotFoundException e) {
+            // El archivo no existe, puedes crearlo si es necesario
 
-            // Dividir la línea en partes según algún delimitador (por ejemplo, coma)
-            String[] partes = linea.split(",");
-            // Crear un nuevo usuario y agregarlo a la lista
-            Usuario usuario = new Usuario(Integer.parseInt(partes[0]), partes[1], Double.parseDouble(partes[2]), Integer.parseInt(partes[3]),
-                    partes[4], new Carrito(), new ArrayList<>(), partes[5], partes[6], partes[7], partes[8], partes[9], partes[10]);
-            listaUsuarios.add(usuario);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    } catch (FileNotFoundException e) {
-        // El archivo no existe, puedes crearlo si es necesario
-        
-    } catch (IOException e) {
-        e.printStackTrace();
+
+        return listaUsuarios;
     }
 
-    return listaUsuarios;
-}
-
-// Método para guardar la lista de usuarios en el archivo
-public static void guardarUsuariosEnArchivo(List<Usuario> listaUsuarios) {
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARCHIVO_CLIENTES, true))) {
-        for (Usuario usuario : listaUsuarios) {
-            // Formatear el usuario como una línea y escribirlo en el archivo sin el prefijo "Cliente"
-            bw.write(String.format("%d,%s,%f,%d,%s,%s,%s,%s,%s,%s%n",
-                    usuario.getCodigoPostal(), usuario.getNombreUsuario(), usuario.getPuntos(), usuario.getNivel(),
-                    usuario.getNombre(), usuario.getApellidos(), usuario.getDireccion(), usuario.getTelefono(),
-                    usuario.getCorreoElectronico(), usuario.getContraseña()));
+    public static void guardarUsuariosEnArchivo(List<Usuario> listaUsuarios) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARCHIVO_CLIENTES, true))) {
+            for (Usuario usuario : listaUsuarios) {
+                // Formatear el usuario como una línea y escribirlo en el archivo sin el prefijo "Cliente"
+                bw.write(String.format("%d,%s,%f,%d,%s,%s,%s,%s,%s,%s%n",
+                        usuario.getCodigoPostal(), usuario.getNombreUsuario(), usuario.getPuntos(), usuario.getNivel(),
+                        usuario.getNombre(), usuario.getApellidos(), usuario.getDireccion(), usuario.getTelefono(),
+                        usuario.getCorreoElectronico(), usuario.getContraseña()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    } catch (IOException e) {
-        e.printStackTrace();
     }
-}
 
 
     // Método para registrar un nuevo usuario

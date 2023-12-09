@@ -13,53 +13,53 @@ public class RegistroGerentes {
     private static final String ARCHIVO_GERENTES = "Gerentes.txt";
     private static final String DELIMITADOR = ",";
 
-public static List<Gerente> leerGerentesDesdeArchivo() {
-    List<Gerente> listaGerentes = new ArrayList<>();
+    public static List<Gerente> leerGerentesDesdeArchivo() {
+        List<Gerente> listaGerentes = new ArrayList<>();
 
-    Path archivoPath = Paths.get(ARCHIVO_GERENTES);
+        Path archivoPath = Paths.get(ARCHIVO_GERENTES);
 
-    if (!Files.exists(archivoPath)) {
-        try {
-            Files.createFile(archivoPath);
+        if (!Files.exists(archivoPath)) {
+            try {
+                Files.createFile(archivoPath);
+            } catch (IOException e) {
+
+            }
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(ARCHIVO_GERENTES))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                if (linea.startsWith("Gerente")) {
+                    continue;  // Ignorar esta línea y pasar a la siguiente
+                }
+
+                String[] partes = linea.split(DELIMITADOR);
+
+                if (partes.length == 10) {
+                    Gerente gerente = new Gerente(partes[0], partes[1], partes[2], partes[3], partes[4], partes[5], partes[6], partes[7], partes[8], partes[9]);
+                    listaGerentes.add(gerente);
+                } else {
+                    System.out.println("Error en el formato de la línea: " + linea);
+                }
+            }
         } catch (IOException e) {
-            
+            e.printStackTrace();
         }
+
+        return listaGerentes;
     }
-    try (BufferedReader br = new BufferedReader(new FileReader(ARCHIVO_GERENTES))) {
-        String linea;
-        while ((linea = br.readLine()) != null) {
-            if (linea.startsWith("Gerente")) {
-                continue;  // Ignorar esta línea y pasar a la siguiente
+
+    public static void guardarGerentesEnArchivo(List<Gerente> listaGerentes) {
+        try (PrintWriter writer = new PrintWriter(ARCHIVO_GERENTES)) {
+            for (Gerente gerente : listaGerentes) {
+                writer.println(String.format("%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s",
+                        gerente.getRFC(), gerente.getNumTrabajador(), gerente.getTipoTrabajador(),
+                        gerente.getSucursal(), gerente.getNombre(), gerente.getApellidos(),
+                        gerente.getDireccion(), gerente.getTelefono(), gerente.getCorreoElectronico(), gerente.getContraseña()));
             }
-
-            String[] partes = linea.split(DELIMITADOR);
-            
-            if (partes.length == 10) {
-                Gerente gerente = new Gerente(partes[0], partes[1], partes[2], partes[3], partes[4], partes[5], partes[6], partes[7], partes[8], partes[9]);
-                listaGerentes.add(gerente);
-            } else {
-                System.out.println("Error en el formato de la línea: " + linea);
-            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-    } catch (IOException e) {
-        e.printStackTrace();
     }
-
-    return listaGerentes;
-}
-
-public static void guardarGerentesEnArchivo(List<Gerente> listaGerentes) {
-    try (PrintWriter writer = new PrintWriter(ARCHIVO_GERENTES)) {
-        for (Gerente gerente : listaGerentes) {
-            writer.println(String.format("%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s",
-                    gerente.getRFC(), gerente.getNumTrabajador(), gerente.getTipoTrabajador(),
-                    gerente.getSucursal(), gerente.getNombre(), gerente.getApellidos(),
-                    gerente.getDireccion(), gerente.getTelefono(), gerente.getCorreoElectronico(), gerente.getContraseña()));
-        }
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
-    }
-}
 
 
     public static void registrarGerente(Gerente gerente) {

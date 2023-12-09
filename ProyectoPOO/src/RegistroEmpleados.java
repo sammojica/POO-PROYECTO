@@ -49,18 +49,18 @@ public class RegistroEmpleados {
         return listaEmpleados;
     }
 
-public static void guardarEmpleadosEnArchivo(List<Empleado> listaEmpleados) {
-    try (PrintWriter writer = new PrintWriter(ARCHIVO_EMPLEADOS)) {
-        for (Empleado empleado : listaEmpleados) {
-            writer.println(String.format("%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s",
-                    empleado.getRFC(), empleado.getNumTrabajador(), empleado.getTipoTrabajador(),
-                    empleado.getSucursal(), empleado.getNombre(), empleado.getApellidos(),
-                    empleado.getDireccion(), empleado.getTelefono(), empleado.getCorreoElectronico(), empleado.getContraseña()));
+    public static void guardarEmpleadosEnArchivo(List<Empleado> listaEmpleados) {
+        try (PrintWriter writer = new PrintWriter(ARCHIVO_EMPLEADOS)) {
+            for (Empleado empleado : listaEmpleados) {
+                writer.println(String.format("%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s" + DELIMITADOR + "%s",
+                        empleado.getRFC(), empleado.getNumTrabajador(), empleado.getTipoTrabajador(),
+                        empleado.getSucursal(), empleado.getNombre(), empleado.getApellidos(),
+                        empleado.getDireccion(), empleado.getTelefono(), empleado.getCorreoElectronico(), empleado.getContraseña()));
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
     }
-}
 
     public static void registrarEmpleado(Empleado empleado) {
         List<Empleado> listaEmpleados = new ArrayList<>(leerEmpleadosDesdeArchivo());
