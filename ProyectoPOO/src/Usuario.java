@@ -2,7 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
 public class Usuario extends Persona {
+
     public int codigoPostal;
     public String nombreUsuario;
     public double puntos;
@@ -19,10 +21,60 @@ public class Usuario extends Persona {
         this.puntos = puntos;
         this.nivel = nivel;
         this.Sucursal = Sucursal;
-        this.carrito = carrito;
-        this.historialCompras = historialCompras;
+        // Asignar carrito solo si no es null, de lo contrario, crea un nuevo Carrito
+        this.carrito = (carrito != null) ? carrito : new Carrito();
+
+        // Asignar historialCompras solo si no es null, de lo contrario, crea una nueva lista
+        this.historialCompras = (historialCompras != null) ? historialCompras : new ArrayList<>();
     }
-    
+
+    public String toString() {
+        return String.format(
+                "%d,%s,%f,%d,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                codigoPostal, nombreUsuario, puntos, nivel, Sucursal,
+                carritoToString(), historialComprasToString(), nombre, apellidos,
+                direccion, telefono, correoElectronico, contraseña);
+    }
+
+    public static Usuario fromString(String linea) {
+        String[] partes = linea.split(",");
+        int codigoPostal = Integer.parseInt(partes[0]);
+        String nombreUsuario = partes[1];
+        double puntos = Double.parseDouble(partes[2]);
+        int nivel = Integer.parseInt(partes[3]);
+        String Sucursal = partes[4];
+        Carrito carrito = parseCarrito(partes[5]);  // Implementa parseCarrito según tus necesidades
+        List<Compra> historialCompras = parseHistorial(partes[6]);  // Implementa parseHistorial
+        String nombre = partes[7];
+        String apellidos = partes[8];
+        String direccion = partes[9];
+        String telefono = partes[10];
+        String correoElectronico = partes[11];
+        String contraseña = partes[12];
+
+        return new Usuario(codigoPostal, nombreUsuario, puntos, nivel, Sucursal, carrito, historialCompras, nombre, apellidos, direccion, telefono, correoElectronico, contraseña);
+    }
+
+    private String carritoToString() {
+        // Implementa la lógica para convertir el carrito a una cadena
+        return (carrito != null) ? carrito.toString() : "null";
+    }
+
+    private String historialComprasToString() {
+        // Implementa la lógica para convertir el historial de compras a una cadena
+        return (historialCompras != null) ? historialCompras.toString() : "null";
+    }
+
+    private static Carrito parseCarrito(String cadenaCarrito) {
+        // Implementa la lógica para convertir la cadena a un objeto Carrito
+        return (cadenaCarrito.equals("null")) ? null : new Carrito();  // Ajusta según tu lógica real
+    }
+
+    private static List<Compra> parseHistorial(String cadenaHistorial) {
+        // Implementa la lógica para convertir la cadena a una lista de Compra
+        return (cadenaHistorial.equals("null")) ? new ArrayList<>() : new ArrayList<>();  // Ajusta según tu lógica real
+    }
+
     public int getCodigoPostal() {
         return codigoPostal;
     }
@@ -78,13 +130,12 @@ public class Usuario extends Persona {
     public void agregarCompraAlHistorial(Compra compra) {
         historialCompras.add(compra);
     }
-    
-  
+
     public static void main() {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("**Inicio de sesión**");
-        List<Usuario> usuariosRegistrados = RegistroClientes.leerUsuariosDesdeArchivo();
+        List<Usuario> usuariosRegistrados = RegistroClientes.leerClientesDesdeArchivo();
         // Verificar si hay usuarios registrados
         if (usuariosRegistrados.isEmpty()) {
             System.out.println("Aún no hay usuarios registrados. Regístrese primero.");
@@ -104,7 +155,7 @@ public class Usuario extends Persona {
 
             System.out.println("Ingrese su contraseña:");
             String contraseñaIngresada = scan.nextLine();
-            
+
             // Validar el nombre de usuario y la contraseña
             Usuario usuariotemp = validarUsuarioYContraseña(nombreUsuarioIngresado, contraseñaIngresada, usuariosRegistrados);
             if (usuariotemp != null) {
@@ -117,51 +168,51 @@ public class Usuario extends Persona {
         }
     }
 
-public static Usuario validarUsuarioYContraseña(String nombreUsuario, String contraseña, List<Usuario> usuariosRegistrados) {
-    for (Usuario usuario : usuariosRegistrados) {
-        if (usuario.getNombreUsuario().equals(nombreUsuario) && usuario.getContraseña().equals(contraseña)) {
-            // Validación exitosa, devuelve el objeto Usuario encontrado
-            return usuario;
-        }
-    }
-    // Si no se encuentra un usuario con la combinación correcta de nombre de usuario y contraseña
-    return null;
-}
-    
-public static void verHistorialCompras(Usuario usuario) {
-    List<Compra> historialCompras = usuario.getHistorialCompras();
-
-    if (historialCompras.isEmpty()) {
-        System.out.println("No hay historial de compras para el usuario.");
-    } else {
-        System.out.println("**Historial de Compras para " + usuario.getNombre() + "**");
-        for (Compra compra : historialCompras) {
-            System.out.println("Fecha: " + compra.getFechaCompra());
-            System.out.println("Productos:");
-            for (Map.Entry<Producto, Integer> entry : compra.getProductosComprados().entrySet()) {
-                Producto producto = entry.getKey();
-                int cantidad = entry.getValue();
-                System.out.println("   Nombre: " + producto.getNombre() + ", Cantidad: " + cantidad);
+    public static Usuario validarUsuarioYContraseña(String nombreUsuario, String contraseña, List<Usuario> usuariosRegistrados) {
+        for (Usuario usuario : usuariosRegistrados) {
+            if (usuario.getNombreUsuario().equals(nombreUsuario) && usuario.getContraseña().equals(contraseña)) {
+                // Validación exitosa, devuelve el objeto Usuario encontrado
+                return usuario;
             }
-            System.out.println("---------------------------------------------");
+        }
+        // Si no se encuentra un usuario con la combinación correcta de nombre de usuario y contraseña
+        return null;
+    }
+
+    public static void verHistorialCompras(Usuario usuario) {
+        List<Compra> historialCompras = usuario.getHistorialCompras();
+
+        if (historialCompras.isEmpty()) {
+            System.out.println("No hay historial de compras para el usuario.");
+        } else {
+            System.out.println("**Historial de Compras para " + usuario.getNombre() + "**");
+            for (Compra compra : historialCompras) {
+                System.out.println("Fecha: " + compra.getFechaCompra());
+                System.out.println("Productos:");
+                for (Map.Entry<Producto, Integer> entry : compra.getProductosComprados().entrySet()) {
+                    Producto producto = entry.getKey();
+                    int cantidad = entry.getValue();
+                    System.out.println("   Nombre: " + producto.getNombre() + ", Cantidad: " + cantidad);
+                }
+                System.out.println("---------------------------------------------");
+            }
         }
     }
-}
-    
-    public static void menu(Usuario usuario){
+
+    public static void menu(Usuario usuario) {
         Scanner scan = new Scanner(System.in);
         int op;
 
         do {
-        System.out.println("\n\nBienvenido a la SUPER Tienda FI");
-        System.out.println("1. Buscar producto.");
-        System.out.println("2. Ver carrito.");
-        System.out.println("3. Actualizar datos personales.");
-        System.out.println("4. Ver mis compras.");
-        System.out.println("5. Ver mis puntos.");
-        System.out.println("6. Cerrar sesión.");
-        op = scan.nextInt();
-            switch(op) {
+            System.out.println("\n\nBienvenido a la SUPER Tienda FI");
+            System.out.println("1. Buscar producto.");
+            System.out.println("2. Ver carrito.");
+            System.out.println("3. Actualizar datos personales.");
+            System.out.println("4. Ver mis compras.");
+            System.out.println("5. Ver mis puntos.");
+            System.out.println("6. Cerrar sesión.");
+            op = scan.nextInt();
+            switch (op) {
                 case 1:
                     Producto.buscarProducto(usuario.getCarrito(), usuario.getSucursal());
                     break;
@@ -185,9 +236,8 @@ public static void verHistorialCompras(Usuario usuario) {
                     System.out.println("Opción inválida.");
                     break;
             }
-        } while(op != 6);
+        } while (op != 6);
     }
 
-    
 }
 
