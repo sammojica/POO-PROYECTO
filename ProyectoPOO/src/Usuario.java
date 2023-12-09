@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -128,6 +129,9 @@ public class Usuario extends Persona {
     }
 
     public void agregarCompraAlHistorial(Compra compra) {
+        if (historialCompras == null) {
+            historialCompras = new ArrayList<>();
+        }
         historialCompras.add(compra);
     }
 
@@ -178,26 +182,29 @@ public class Usuario extends Persona {
         // Si no se encuentra un usuario con la combinación correcta de nombre de usuario y contraseña
         return null;
     }
+    
+public static void imprimirHistorialCompras(Usuario usuario) {
+    List<Compra> historialCompras = usuario.getHistorialCompras();
 
-    public static void verHistorialCompras(Usuario usuario) {
-        List<Compra> historialCompras = usuario.getHistorialCompras();
+    if (historialCompras == null || historialCompras.isEmpty()) {
+        System.out.println("El historial de compras está vacío.");
+    } else {
+        System.out.println("Historial de compras para el usuario " + usuario.getNombre() + ":");
+        for (Compra compra : historialCompras) {
+            System.out.println("Fecha de compra: " + compra.getFechaCompra());
+            System.out.println("Productos comprados:");
 
-        if (historialCompras.isEmpty()) {
-            System.out.println("No hay historial de compras para el usuario.");
-        } else {
-            System.out.println("**Historial de Compras para " + usuario.getNombre() + "**");
-            for (Compra compra : historialCompras) {
-                System.out.println("Fecha: " + compra.getFechaCompra());
-                System.out.println("Productos:");
-                for (Map.Entry<Producto, Integer> entry : compra.getProductosComprados().entrySet()) {
-                    Producto producto = entry.getKey();
-                    int cantidad = entry.getValue();
-                    System.out.println("   Nombre: " + producto.getNombre() + ", Cantidad: " + cantidad);
-                }
-                System.out.println("---------------------------------------------");
+            for (Map.Entry<Producto, Integer> entry : compra.getProductosComprados().entrySet()) {
+                Producto producto = entry.getKey();
+                int cantidad = entry.getValue();
+                System.out.println("- " + producto.getNombre() + ": " + cantidad);
             }
+
+            System.out.println("------------------------------");
         }
     }
+}
+
 
     public static void menu(Usuario usuario) {
         Scanner scan = new Scanner(System.in);
@@ -223,7 +230,7 @@ public class Usuario extends Persona {
                     RegistroClientes.actualizarDatosPersonales(usuario.getNombreUsuario());
                     break;
                 case 4:
-                    verHistorialCompras(usuario);
+                    imprimirHistorialCompras(usuario);
                     break;
                 case 5:
                     double puntos = usuario.getPuntos();
