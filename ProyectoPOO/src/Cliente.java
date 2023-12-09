@@ -6,7 +6,7 @@ public class Cliente {
     int op;
     pregunta();
     Carrito carritoTemporal = new Carrito(); 
-    System.out.println("\n\nBienvenido a la SUPER Tienda FI");
+    System.out.println("\n\nSistema de compra sin inicio de sesión.\nBienvenido a la SUPER Tienda FI");
     System.out.println("¿En qué sucursal realizará la compra? [o presione 's' para salir]");
     String sucursaltemp = scan.nextLine();
     
