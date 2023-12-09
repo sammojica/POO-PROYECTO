@@ -1,0 +1,6 @@
+68300,sammojica,0.000000,0,norte,Carrito@7daf6ecc,Samantha,Mojica,calle 34,5572848273,sammojica@gmail.com,zapatoverde
+68300,alerios,0.000000,0,norte,Carrito@3eb07fd3,Alejandra,Rios,calle 23,5583847212,alerios@gmail.com,zapatorosa
+68300,karlahdz,0.000000,0,centro,Carrito@506c589e,Karla,Hernandez,calle 34,5572836432,karlahdz@gmail.com,holamundo
+48923,greciairais,0.000000,0,centro,Carrito@69d0a921,Grecia,Meneses,calle 35,5527388483,girais@gmail.com,holamundo1
+52673,perlamtz,0.000000,0,sur,Carrito@446cdf90,Perla,Martinez,calle 35,5532321857,permtz@gmail.com,controlremoto
+68300,gabrielmed,0.000000,0,sur,Carrito@799f7e29,Gabriel,Medina,calle 78,5536283943,gabmed@gmail.com,controlremoto1
