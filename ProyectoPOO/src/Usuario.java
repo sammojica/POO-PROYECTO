@@ -220,7 +220,7 @@ public class Usuario extends Persona {
                     Carrito.verCarrito(usuario, usuario.getSucursal());
                     break;
                 case 3:
-                    RegistroClientes.actualizarDatosPersonales(usuario);
+                    RegistroClientes.actualizarDatosPersonales(usuario.getNombreUsuario());
                     break;
                 case 4:
                     verHistorialCompras(usuario);
@@ -240,4 +240,3 @@ public class Usuario extends Persona {
     }
 
 }
-
