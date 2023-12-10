@@ -156,7 +156,7 @@ public class RegistroClientes {
         System.out.println("Ingrese su número de teléfono:");
         String numero = scan.nextLine();
 
-        Usuario nuevoUsuario1 = new Usuario(codigoP, usuariotemp, 0, 0, sucursal, null, null, nombre, apellido, direccion, numero, correoE, contraseña);
+        Usuario nuevoUsuario1 = new Usuario(codigoP, usuariotemp, 0, 0, sucursal, null, nombre, apellido, direccion, numero, correoE, contraseña);
         registrarCliente(nuevoUsuario1);
     }
 
