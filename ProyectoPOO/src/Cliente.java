@@ -33,7 +33,7 @@ public class Cliente {
                     Producto.buscarProducto(carritoTemporal, sucursaltemp);
                     break;
                 case 2:
-                    //Carrito.verCarritoSinUsuario(carritoTemporal, sucursaltemp);
+                    Carrito.verCarritoSinUsuario(carritoTemporal, sucursaltemp);
                     break;
                 case 3:
                     System.out.println("Saliendo del menú...\n\n");
@@ -91,3 +91,4 @@ public class Cliente {
         }
     }
 }
+
