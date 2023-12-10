@@ -9,7 +9,6 @@ public class Empleado extends Persona {
     public String numTrabajador;
     public String tipoTrabajador;
     public String Sucursal;
-    private List<Solicitud> solicitudesPendientes;
 
     public Empleado(String RFC, String numTrabajador, String tipoTrabajador, String Sucursal, String nombre, String apellidos, String direccion, String telefono, String correoElectronico, String contraseña) {
         super(nombre, apellidos, direccion, telefono, correoElectronico, contraseña);
@@ -50,10 +49,6 @@ public class Empleado extends Persona {
     public void setSucursal(String Sucursal) {
         this.Sucursal = Sucursal;
     }
-    
-    public List<Solicitud> getSolicitudesPendientes() {
-        return solicitudesPendientes;
-    }
 
     public static void menu(Empleado empleado) {
         Scanner scan = new Scanner(System.in);
@@ -71,7 +66,7 @@ public class Empleado extends Persona {
                     empleado.actualizarStock();
                     break;
                 case 2:
-                    actualizarDatosPersonalesEmpleado(empleado);
+                    empleado.actualizarDatosPersonales(empleado);
                     break;
                 case 3:
                     crearOrdenResurtido();
@@ -88,7 +83,7 @@ public class Empleado extends Persona {
 
     public static void main() {
         Scanner scan = new Scanner(System.in);
-        System.out.println("**Inicio de sesión para Empleados**");
+        System.out.println("\n**Inicio de sesión para Empleados**");
         List<Empleado> empleadosRegistrados = RegistroEmpleados.leerEmpleadosDesdeArchivo();
         // Verificar si hay empleados registrados
         if (empleadosRegistrados.isEmpty()) {
@@ -152,30 +147,31 @@ public class Empleado extends Persona {
             System.out.println("-----------------------------------------------");
         }
     }
-    public static void actualizarDatosPersonalesEmpleado(Empleado empleado) {
-      Scanner scan = new Scanner(System.in);
-      List<Empleado> empleadosRegistrados = RegistroEmpleados.leerEmpleadosDesdeArchivo();
-      // Buscar al empleado en la lista
-      Empleado empleadoEnLista = buscarEmpleadoPorNumero(empleadosRegistrados, empleado.getNumTrabajador());
+    
+    public void actualizarDatosPersonales(Empleado empleado) {
+        Scanner scan = new Scanner(System.in);
+        List<Empleado> empleadosRegistrados = RegistroEmpleados.leerEmpleadosDesdeArchivo();
+        // Buscar al empleado en la lista
+        Empleado empleadoEnLista = buscarEmpleadoPorNumero(empleadosRegistrados, empleado.getNumTrabajador());
 
-      if (empleadoEnLista != null) {
-          // Mostrar los datos actuales del empleado
-          System.out.println("-----DATOS ACTUALES-----\n");
-          System.out.println("RFC: " + empleadoEnLista.getRFC());
-          System.out.println("Número de trabajador: " + empleadoEnLista.getNumTrabajador());
-          System.out.println("Nombre: " + empleadoEnLista.getNombre());
-          System.out.println("Apellido: " + empleadoEnLista.getApellidos());
-          System.out.println("Correo electrónico: " + empleadoEnLista.getCorreoElectronico());
-          System.out.println("Dirección: " + empleadoEnLista.getDireccion());
-          System.out.println("Teléfono: " + empleadoEnLista.getTelefono());
-          System.out.println("Tipo de trabajador: " + empleadoEnLista.getTipoTrabajador());
-          System.out.println("Sucursal: " + empleadoEnLista.getSucursal());
+        if (empleadoEnLista != null) {
+            // Mostrar los datos actuales del empleado
+            System.out.println("-----DATOS ACTUALES-----\n");
+            System.out.println("RFC: " + empleadoEnLista.getRFC());
+            System.out.println("Número de trabajador: " + empleadoEnLista.getNumTrabajador());
+            System.out.println("Nombre: " + empleadoEnLista.getNombre());
+            System.out.println("Apellido: " + empleadoEnLista.getApellidos());
+            System.out.println("Correo electrónico: " + empleadoEnLista.getCorreoElectronico());
+            System.out.println("Dirección: " + empleadoEnLista.getDireccion());
+            System.out.println("Teléfono: " + empleadoEnLista.getTelefono());
+            System.out.println("Tipo de trabajador: " + empleadoEnLista.getTipoTrabajador());
+            System.out.println("Sucursal: " + empleadoEnLista.getSucursal());
 
-          // Pedir al empleado que elija qué campo desea actualizar
-          System.out.println("Seleccione el campo que desea actualizar (1-Nombre, 2-Apellido, 3-Correo, 4-Dirección, 5-Teléfono, 6-RFC, 7-Tipo de Trabajador, 8-Sucursal, 0-Salir):");
-          int opcion = scan.nextInt();
-          scan.nextLine();  // Consumir la nueva línea pendiente después del nextInt
-          System.out.println("---ACTUALIZACIÓN DE DATOS---");
+            // Pedir al empleado que elija qué campo desea actualizar
+            System.out.println("Seleccione el campo que desea actualizar (1-Nombre, 2-Apellido, 3-Correo, 4-Dirección, 5-Teléfono, 6-RFC, 7-Tipo de Trabajador, 8-Sucursal, 0-Salir):");
+            int opcion = scan.nextInt();
+            scan.nextLine();  // Consumir la nueva línea pendiente después del nextInt
+            System.out.println("---ACTUALIZACIÓN DE DATOS---");
         switch (opcion) {
             case 1:
                 System.out.println("Ingrese el nuevo nombre:");
@@ -216,20 +212,20 @@ public class Empleado extends Persona {
                 System.out.println("Opción no válida.");
         }
 
-          RegistroEmpleados.guardarEmpleadosEnArchivo(empleadosRegistrados);
-      } else {
-          System.out.println("Empleado no encontrado en la lista.");
-      }
-  }
+        RegistroEmpleados.guardarEmpleadosEnArchivo(empleadosRegistrados);
+        } else {
+            System.out.println("Empleado no encontrado en la lista.");
+        }
+    }
 
-  private static Empleado buscarEmpleadoPorNumero(List<Empleado> empleados, String numeroTrabajador) {
-      for (Empleado empleado : empleados) {
-          if (empleado.getNumTrabajador().equals(numeroTrabajador)) {
-              return empleado;
-          }
-      }
-      return null;
-  }
+    private static Empleado buscarEmpleadoPorNumero(List<Empleado> empleados, String numeroTrabajador) {
+        for (Empleado empleado : empleados) {
+            if (empleado.getNumTrabajador().equals(numeroTrabajador)) {
+                return empleado;
+            }
+        }
+        return null;
+    }
 
     public void actualizarStock() {
         Scanner scan = new Scanner(System.in);
@@ -237,65 +233,72 @@ public class Empleado extends Persona {
         RegistroSolicitud registroSolicitud = new RegistroSolicitud();
         Solicitud ultimaSolicitud = registroSolicitud.crearSolicitud(scan, this.getNumTrabajador(),false);
         
-        List<Solicitud> solicitudes = RegistroSolicitud.leerSolicitudesDesdeArchivo();
+       
+        RegistroGerentes registroGerente = new RegistroGerentes();
+        List<Gerente> listaGerentes = new ArrayList<>(registroGerente.leerGerentesDesdeArchivo());
+        ultimaSolicitud.setIdGerente(listaGerentes.get(1).getNumTrabajador());
+        Gerente gerente = (Gerente)Gerente.buscarGerentePorNumero(listaGerentes, ultimaSolicitud.getIdGerente());
+        Solicitud nuevaSolicitud = gerente.solicitarActualizacionStock(scan, false, ultimaSolicitud);
         
-        if (!solicitudes.isEmpty()) {
-            if(ultimaSolicitud.getEstado() == Solicitud.EstadoSolicitud.APROBADA){
-                System.out.println("Ingrese el nombre del producto:");
-                String nombreProducto = scan.nextLine();
+        if(nuevaSolicitud != null && (nuevaSolicitud.getEstado1() == Solicitud.EstadoSolicitud.APROBADA)) {
+            List<Solicitud> solicitudes = RegistroSolicitud.leerSolicitudesDesdeArchivo();
 
-                System.out.println("Ingrese la sucursal (norte/sur/centro):");
-                String sucursal = scan.nextLine();
+            if (!solicitudes.isEmpty()) {
+                if(ultimaSolicitud.getEstado2() == Solicitud.EstadoSolicitud.APROBADA){
+                    //System.out.println("\nLa solicitud fue APROBADA.");
 
-                // Buscar el producto en la sucursal especificada
-                Producto producto = Producto.buscarProductoEnSucursal(nombreProducto, sucursal);
+                    // Buscar el producto en la sucursal especificada
+                    Producto producto = Producto.buscarProductoEnSucursal(ultimaSolicitud.getNombreProducto(), ultimaSolicitud.getSucursal());
 
-                if (producto == null) {
-                    System.out.println("No se encontró el producto en la sucursal especificada.");
-                    return;
-                }
-
-                // Mostrar la cantidad actual de productos en la sucursal
-                int stockActual = Producto.obtenerStockSegunSucursal(producto, sucursal);
-                System.out.println("Cantidad actual de productos en la sucursal " + sucursal + ": " + stockActual);
-
-                // Solicitar al usuario la nueva cantidad de stock
-                System.out.println("Ingrese la nueva cantidad de stock:");
-                int nuevaCantidad = scan.nextInt();
-
-                // Actualizar el stock según la sucursal especificada
-                switch (sucursal.toLowerCase()) {
-                    case "norte":
-                        producto.setStockNorte(nuevaCantidad);
-                        break;
-                    case "sur":
-                        producto.setStockSur(nuevaCantidad);
-                        break;
-                    case "centro":
-                        producto.setStockCentro(nuevaCantidad);
-                        break;
-                    default:
-                        System.out.println("Sucursal no válida. No se actualizó el stock.");
-                        return;
-                }
-
-                // Guardar la lista actualizada en el archivo
-                List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
-                for (int i = 0; i < listaProductos.size(); i++) {
-                    if (listaProductos.get(i).getNombre().equalsIgnoreCase(nombreProducto)) {
-                        listaProductos.set(i, producto);
-                        Producto.guardarProductosEnArchivo(listaProductos);
-                        System.out.println("Stock actualizado correctamente en la sucursal " + sucursal + ".");
+                    if (producto == null) {
+                        System.out.println("No se encontró el producto en la sucursal especificada.");
                         return;
                     }
-                    
-                    System.out.println("Error al actualizar el stock. El producto no se encuentra en la lista.");
+
+                    // Mostrar la cantidad actual de productos en la sucursal
+                    int stockActual = Producto.obtenerStockSegunSucursal(producto, ultimaSolicitud.getSucursal());
+                    System.out.println("Cantidad actual de productos en la sucursal " + ultimaSolicitud.getSucursal() + ": " + stockActual);
+
+                    // Solicitar al usuario la nueva cantidad de stock
+                    System.out.println("Ingrese la nueva cantidad de stock:");
+                    int nuevaCantidad = scan.nextInt();
+
+                    // Actualizar el stock según la sucursal especificada
+                    switch (ultimaSolicitud.getSucursal().toLowerCase()) {
+                        case "norte":
+                            producto.setStockNorte(nuevaCantidad);
+                            break;
+                        case "sur":
+                            producto.setStockSur(nuevaCantidad);
+                            break;
+                        case "centro":
+                            producto.setStockCentro(nuevaCantidad);
+                            break;
+                        default:
+                            System.out.println("Sucursal no válida. No se actualizó el stock.");
+                            return;
+                    }
+
+                    // Guardar la lista actualizada en el archivo
+                    List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
+                    for (int i = 0; i < listaProductos.size(); i++) {
+                        if (listaProductos.get(i).getNombre().equalsIgnoreCase(ultimaSolicitud.getNombreProducto())) {
+                            listaProductos.set(i, producto);
+                            Producto.guardarProductosEnArchivo(listaProductos);
+                            System.out.println("Stock actualizado correctamente en la sucursal " + ultimaSolicitud.getSucursal() + ".");
+                            return;
+                        }
+
+                        //System.out.println("Error al actualizar el stock. El producto no se encuentra en la lista.");
+                    }
+                }else{
+                    System.out.println("La solicitud no está aprobada. No se puede actualizar el stock.");
                 }
-            }else{
-                System.out.println("La solicitud no está aprobada. No se puede actualizar el stock.");
-            }
-        }else
-            System.out.println("No se encontró ninguna solicitud");
+            }else
+                System.out.println("No se encontró ninguna solicitud");
+        }else{
+            System.out.println("La solicitud no fue aprobada. No se puede actualizar el stock.");
+        }
     }
 
 
@@ -341,6 +344,18 @@ public class Empleado extends Persona {
         OrdenDeSurtido.guardarOrdenesSurtidoEnArchivo(listaOrdenes);
     }
     
+    public static String obtenerNombreYApellidoPorID(String id){
+        RegistroEmpleados registroEmpleado = new RegistroEmpleados();
+        List<Empleado> listaEmpleados = new ArrayList<>(registroEmpleado.leerEmpleadosDesdeArchivo());
+        for (Empleado empleado : listaEmpleados){
+            if (empleado.getNumTrabajador().equals(id)) {
+                return empleado.getNombre() + " " + empleado.getApellidos();
+            }
+        }
+
+        return "No se encontró el empleado con ID " + id;
+
+    }
     
 
 }

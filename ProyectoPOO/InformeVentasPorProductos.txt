@@ -1,0 +1,9 @@
+Informe de Ventas por Productos
+--------------------------------
+
+Nombre: Mentos, Total de Ventas: 2
+Nombre: ICEE, Total de Ventas: 1
+Informe de Ventas por Productos
+--------------------------------
+
+Nombre: Coca Cola, Total de Ventas: 1

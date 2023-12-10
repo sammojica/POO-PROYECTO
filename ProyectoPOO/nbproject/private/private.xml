@@ -3,11 +3,25 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/karla/Documents/GitHub/POO-PROYECTO/ProyectoPOO/src/Empleado.java</file>
-            <file>file:/C:/Users/karla/Documents/GitHub/POO-PROYECTO/ProyectoPOO/src/InterfazVentas.java</file>
-            <file>file:/C:/Users/karla/Documents/GitHub/POO-PROYECTO/ProyectoPOO/src/Producto.java</file>
-            <file>file:/C:/Users/karla/Documents/GitHub/POO-PROYECTO/ProyectoPOO/src/OrdenDeSurtido.java</file>
-            <file>file:/C:/Users/karla/Documents/GitHub/POO-PROYECTO/ProyectoPOO/src/Compra.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Solicitud.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Compra.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Cliente.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/RegistroEmpleados.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Empleado.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/GeneradorDeInformes.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Banco.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Usuario.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Carrito.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/RegistroClientes.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Gerente.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Producto.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/RegistroTransaccion.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Persona.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/InterfazVentas.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/OrdenDeSurtido.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/RegistroSolicitud.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/Sucursal.java</file>
+            <file>file:/C:/Users/maye_/Documents/NetBeansProjects/POO-PROYECTO-main/ProyectoPOO/src/RegistroGerentes.java</file>
         </group>
     </open-files>
 </project-private>

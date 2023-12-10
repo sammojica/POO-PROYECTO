@@ -15,21 +15,35 @@ public class Solicitud {
     private String nombreProducto;
     private String sucursal;
     private int stock;
-    private EstadoSolicitud estado;
+    private EstadoSolicitud estado1;
+    private EstadoSolicitud estado2;
     private String idGerente;
     private String idEmpleado;
 
-    public Solicitud(String nombreProducto, String sucursal, int stock, EstadoSolicitud estado, String idGerente, String idEmpleado) {
+    public Solicitud(String nombreProducto, String sucursal, int stock, EstadoSolicitud estado1, EstadoSolicitud estado2, String idGerente, String idEmpleado) {
         this.nombreProducto = nombreProducto;
         this.sucursal = sucursal;
         this.stock = stock;
-        this.estado = estado;
+        this.estado1 = estado1;
+        this.estado2 = estado2;
         this.idGerente = idGerente;
         this.idEmpleado = idEmpleado;
     }
 
-    public EstadoSolicitud getEstado() {
-        return estado;
+    public EstadoSolicitud getEstado1() {
+        return estado1;
+    }
+
+    public EstadoSolicitud getEstado2() {
+        return estado2;
+    }
+
+    public void setEstado1(EstadoSolicitud estado1) {
+        this.estado1 = estado1;
+    }
+
+    public void setEstado2(EstadoSolicitud estado2) {
+        this.estado2 = estado2;
     }
 
     public String getNombreProducto() {
@@ -44,10 +58,6 @@ public class Solicitud {
         return stock;
     }
     
-    public void setEstado(EstadoSolicitud estado) {
-        this.estado = estado;
-    }
-
     public String getIdGerente() {
         return idGerente;
     }

@@ -1,0 +1,15 @@
+Informe de Ventas General
+-------------------------
+
+Fecha de Compra: Sat Dec 09 13:04:25 CST 2023
+Productos Comprados:
+   Nombre: Mentos, Cantidad: 2
+   Nombre: ICEE, Cantidad: 1
+---------------------------------------------
+Informe de Ventas General
+-------------------------
+
+Fecha de Compra: Sat Dec 09 13:15:18 CST 2023
+Productos Comprados:
+   Nombre: Coca Cola, Cantidad: 1
+---------------------------------------------

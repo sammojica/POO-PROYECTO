@@ -1,0 +1,8 @@
+Informe de Ventas por Tiendas
+-------------------------------
+
+Sucursal: centro, Total de Ventas: 1
+Informe de Ventas por Tiendas
+-------------------------------
+
+Sucursal: norte, Total de Ventas: 1

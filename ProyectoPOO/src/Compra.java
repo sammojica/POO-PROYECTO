@@ -1,16 +1,15 @@
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
-public class Compra {
+class Compra {
     private Date fechaCompra;  // Incluye la fecha de la compra
     private Map<Producto, Integer> productosComprados;
+    private String sucursal;
 
-    // Modifica el constructor para no requerir la fecha inicialmente
-    public Compra(Map<Producto, Integer> productosComprados) {
-        this.fechaCompra = new Date();  // Asigna la fecha actual al crear la compra
+    public Compra(Date fechaCompra, Map<Producto, Integer> productosComprados, String sucursal) {
+        this.fechaCompra = fechaCompra;
         this.productosComprados = productosComprados;
+        this.sucursal = sucursal;
     }
 
     public Date getFechaCompra() {
@@ -20,5 +19,9 @@ public class Compra {
     public Map<Producto, Integer> getProductosComprados() {
         return productosComprados;
     }
+    
+    public String getSucursal() {
+        return sucursal;
+    } 
     
 }

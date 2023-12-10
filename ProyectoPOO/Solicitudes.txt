@@ -1,0 +1,2 @@
+Fritos,norte,30,RECHAZADA,456352, 
+Fritos,sur,4,APROBADA,456738,123456

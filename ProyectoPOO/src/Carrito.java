@@ -11,8 +11,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Carrito {
-
     private Map<Producto, Integer> productosEnCarrito;
+    private static List<Compra> historialCompras = new ArrayList<>();
 
     public Carrito() {
         this.productosEnCarrito = new HashMap<>();
@@ -36,7 +36,7 @@ public class Carrito {
         // Actualizar el carrito con el nuevo producto y cantidad
         productosEnCarrito.put(producto, productosEnCarrito.getOrDefault(producto, 0) + cantidad);
     }
-
+    
     public void editarUnidadesProducto(Producto producto, int nuevaCantidad) {
         if (productosEnCarrito.containsKey(producto)) {
             productosEnCarrito.put(producto, nuevaCantidad);
@@ -46,7 +46,7 @@ public class Carrito {
         }
     }
 
-// Método para eliminar un producto del carrito
+    // Método para eliminar un producto del carrito
     public void eliminarProducto(Producto producto) {
         if (productosEnCarrito.containsKey(producto)) {
             productosEnCarrito.remove(producto);
@@ -58,7 +58,8 @@ public class Carrito {
 
     private int obtenerStockDisponible(Producto producto, String sucursal) {
         // Devuelve el stock disponible correspondiente a la sucursal
-        int stockDisponible = 0;  // Puedes ajustar este valor de retorno según lo que tenga sentido en tu aplicación
+        int stockDisponible = 0;  
+
         switch (sucursal.toLowerCase()) {
             case "norte":
                 stockDisponible = producto.getStockNorte();
@@ -73,9 +74,10 @@ public class Carrito {
                 System.out.println("Sucursal no válida.");
                 break;
         }
+
         return stockDisponible;
     }
-
+    
     public static void agregarProductoAleatorioAlCarrito(Carrito carrito, String sucursalCliente) {
         // Lógica para obtener un producto aleatorio
         List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
@@ -85,6 +87,7 @@ public class Carrito {
         carrito.agregarProducto(productoAleatorio, cantidad, sucursalCliente);
         System.out.println("Producto gratuito agregado al carrito.");
     }
+
 
     public static void verCarrito(Usuario usuario, String sucursal) {
         Carrito carrito = usuario.getCarrito();
@@ -169,7 +172,7 @@ public class Carrito {
             }
         } while (!salir);
     }
-
+    
     private static Producto obtenerProductoEnCarritoPorNombre(Carrito carrito, String nombreProducto) {
         for (Map.Entry<Producto, Integer> entry : carrito.getProductosEnCarrito().entrySet()) {
             Producto producto = entry.getKey();
@@ -191,6 +194,8 @@ public class Carrito {
 
         return total;
     }
+    
+    
 
     public static void realizarCompra(Carrito carrito, Usuario usuario, String sucursal) {
         List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
@@ -334,7 +339,7 @@ public class Carrito {
             System.out.println("Error al generar el ticket virtual: " + e.getMessage());
         }
     }
-
+    
     private static String obtenerIdTienda(String sucursal) {
         switch (sucursal.toLowerCase()) {
             case "norte":
@@ -356,183 +361,226 @@ public class Carrito {
     
     
     
-    
+
+    private static int obtenerNuevoStock(Producto producto, String sucursal, int cantidadComprada) {
+        // Devuelve el nuevo stock restando la cantidad comprada del stock correspondiente a la sucursal
+        int nuevoStock = 0;  // Puedes ajustar este valor de retorno según lo que tenga sentido en tu aplicación
+
+        switch (sucursal.toLowerCase()) {
+            case "norte":
+                nuevoStock = producto.getStockNorte() - cantidadComprada;
+                break;
+            case "sur":
+                nuevoStock = producto.getStockSur() - cantidadComprada;
+                break;
+            case "centro":
+                nuevoStock = producto.getStockCentro() - cantidadComprada;
+                break;
+            default:
+                // No se actualiza el stock si la sucursal no es válida
+                System.out.println("Sucursal no válida.");
+                break;
+        }
+
+        return nuevoStock;
+    }
+
+    // Método para actualizar el stock según la sucursal
+    private static void actualizarStock(Producto producto, String sucursal, int nuevoStock) {
+        // Actualiza el stock correspondiente a la sucursal del producto
+        switch (sucursal.toLowerCase()) {
+            case "norte":
+                producto.setStockNorte(nuevoStock);
+                break;
+            case "sur":
+                producto.setStockSur(nuevoStock);
+                break;
+            case "centro":
+                producto.setStockCentro(nuevoStock);
+                break;
+            default:
+                // No se actualiza el stock si la sucursal no es válida
+                break;
+        }
+    }
+
     //SIN USUARIO
     
     public static void verCarritoSinUsuario(Carrito carrito, String sucursal) {
-    if (carrito.getProductosEnCarrito().isEmpty()) {
-        System.out.println("El carrito está vacío.");
-        return;
-    }
-    Scanner scan = new Scanner(System.in);
-    boolean salir = false;
-    do {
-        System.out.println("**Contenido del Carrito**");
-        for (Map.Entry<Producto, Integer> entry : carrito.getProductosEnCarrito().entrySet()) {
-            Producto producto = entry.getKey();
-            int cantidad = entry.getValue();
-            System.out.println("Nombre: " + producto.getNombre() + ", Cantidad: " + cantidad);
-        }
-        System.out.println("\n¿Qué acción desea realizar?");
-        System.out.println("1. Comprar los productos en el carrito");
-        System.out.println("2. Editar unidades de un producto");
-        System.out.println("3. Eliminar un producto del carrito");
-        System.out.println("0. Salir");
-
-        int opcion = scan.nextInt();
-        scan.nextLine(); // Consumir la nueva línea pendiente después del nextInt
-
-        switch (opcion) {
-            case 1:
-                if (carrito.getProductosEnCarrito().isEmpty()) {
-                    System.out.println("El carrito está vacío. No hay productos para comprar.");
-                } else {
-                    double totalAPagar = carrito.calcularTotal();
-                    System.out.println("Total a pagar: $" + totalAPagar);
-                    System.out.println("¿Desea comprar los productos en el carrito? (s/n)");
-                    String respuestaCompra = scan.nextLine().toLowerCase();
-                    if (respuestaCompra.equals("s")) {
-                        // Realizar la compra y actualizar el stock
-                        realizarCompraSinUsuario(carrito, sucursal);
-                        salir = true;
-                    } else {
-                        System.out.println("Compra cancelada.");
-                    }
-                }
-                break;
-            case 2:
-                if (carrito.getProductosEnCarrito().isEmpty()) {
-                    System.out.println("El carrito está vacío. No hay productos para editar.");
-                } else {
-                    System.out.println("Ingrese el nombre del producto que desea editar:");
-                    String nombreProductoEditar = scan.nextLine();
-                    Producto productoEditar = obtenerProductoEnCarritoPorNombre(carrito, nombreProductoEditar);
-                    if (productoEditar != null) {
-                        System.out.println("Ingrese la nueva cantidad:");
-                        int nuevaCantidad = scan.nextInt();
-                        carrito.editarUnidadesProducto(productoEditar, nuevaCantidad);
-                    } else {
-                        System.out.println("Producto no encontrado en el carrito.");
-                    }
-                }
-                break;
-            case 3:
-                if (carrito.getProductosEnCarrito().isEmpty()) {
-                    System.out.println("El carrito está vacío. No hay productos para eliminar.");
-                } else {
-                    System.out.println("Ingrese el nombre del producto que desea eliminar:");
-                    String nombreProductoEliminar = scan.nextLine();
-                    Producto productoEliminar = obtenerProductoEnCarritoPorNombre(carrito, nombreProductoEliminar);
-                    if (productoEliminar != null) {
-                        carrito.eliminarProducto(productoEliminar);
-                    } else {
-                        System.out.println("Producto no encontrado en el carrito.");
-                    }
-                }
-                break;
-            case 0:
-                System.out.println("Saliendo del menú.");
-                salir = true;
-                break;
-            default:
-                System.out.println("Opción no válida.");
-                break;
-        }
-    } while (!salir);
-}
-
-public static void realizarCompraSinUsuario(Carrito carrito, String sucursal) {
-    List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
-    // Verificar el stock antes de realizar la compra
-    for (Map.Entry<Producto, Integer> entry : carrito.getProductosEnCarrito().entrySet()) {
-        Producto productoEnCarrito = entry.getKey();
-        int cantidadEnCarrito = entry.getValue();
-        int stockDisponible = carrito.obtenerStockDisponible(productoEnCarrito, sucursal);
-
-        if (cantidadEnCarrito > stockDisponible) {
-            System.out.println("No hay suficiente stock para el producto '" + productoEnCarrito.getNombre() + "'.");
-            System.out.println("Stock disponible: " + stockDisponible);
-            System.out.println("Compra cancelada.");
+        if (carrito.getProductosEnCarrito().isEmpty()) {
+            System.out.println("El carrito está vacío.");
             return;
         }
-    }
-    // Solicitar forma de pago
-    System.out.println("Seleccione la forma de pago:");
-    System.out.println("1. Efectivo");
-    System.out.println("2. Tarjeta de Crédito o Débito");
+        Scanner scan = new Scanner(System.in);
+        boolean salir = false;
+        do {
+            System.out.println("**Contenido del Carrito**");
+            for (Map.Entry<Producto, Integer> entry : carrito.getProductosEnCarrito().entrySet()) {
+                Producto producto = entry.getKey();
+                int cantidad = entry.getValue();
+                System.out.println("Nombre: " + producto.getNombre() + ", Cantidad: " + cantidad);
+            }
+            System.out.println("\n¿Qué acción desea realizar?");
+            System.out.println("1. Comprar los productos en el carrito");
+            System.out.println("2. Editar unidades de un producto");
+            System.out.println("3. Eliminar un producto del carrito");
+            System.out.println("0. Salir");
 
-    Scanner scan = new Scanner(System.in);
-    int opcionFormaPago = scan.nextInt();
-    scan.nextLine(); // Consumir la nueva línea pendiente después del nextInt
-    // Realizar el pago
-    boolean pagoExitoso = false;
-    switch (opcionFormaPago) {
-        case 1:
-            pagoExitoso = realizarPagoEfectivo();
-            break;
-        case 2:
-            if (Usuario.realizarPagoConTarjeta()) {
-                    // Preguntar si se requiere factura solo si el pago con tarjeta fue exitoso
-                    System.out.println("¿Desea factura? (s/n)");
-                    String respuestaFacturaTarjeta = scan.nextLine().toLowerCase();
+            int opcion = scan.nextInt();
+            scan.nextLine(); // Consumir la nueva línea pendiente después del nextInt
 
-                    if (respuestaFacturaTarjeta.equals("s")) {
-                        // Lógica para solicitar información de factura
-                        Usuario.solicitarInformacionFactura();
+            switch (opcion) {
+                case 1:
+                    if (carrito.getProductosEnCarrito().isEmpty()) {
+                        System.out.println("El carrito está vacío. No hay productos para comprar.");
+                    } else {
+                        double totalAPagar = carrito.calcularTotal();
+                        System.out.println("Total a pagar: $" + totalAPagar);
+                        System.out.println("¿Desea comprar los productos en el carrito? (s/n)");
+                        String respuestaCompra = scan.nextLine().toLowerCase();
+                        if (respuestaCompra.equals("s")) {
+                            // Realizar la compra y actualizar el stock
+                            realizarCompraSinUsuario(carrito, sucursal);
+                            salir = true;
+                        } else {
+                            System.out.println("Compra cancelada.");
+                        }
                     }
-                    pagoExitoso = true;
                     break;
-                } else {
-                    System.out.println("Pago con tarjeta cancelado. Se debe seleccionar otra forma de pago.");
+                case 2:
+                    if (carrito.getProductosEnCarrito().isEmpty()) {
+                        System.out.println("El carrito está vacío. No hay productos para editar.");
+                    } else {
+                        System.out.println("Ingrese el nombre del producto que desea editar:");
+                        String nombreProductoEditar = scan.nextLine();
+                        Producto productoEditar = obtenerProductoEnCarritoPorNombre(carrito, nombreProductoEditar);
+                        if (productoEditar != null) {
+                            System.out.println("Ingrese la nueva cantidad:");
+                            int nuevaCantidad = scan.nextInt();
+                            carrito.editarUnidadesProducto(productoEditar, nuevaCantidad);
+                        } else {
+                            System.out.println("Producto no encontrado en el carrito.");
+                        }
+                    }
                     break;
-                }
-        default:
-            System.out.println("Opción de forma de pago no válida.");
-            break;
+                case 3:
+                    if (carrito.getProductosEnCarrito().isEmpty()) {
+                        System.out.println("El carrito está vacío. No hay productos para eliminar.");
+                    } else {
+                        System.out.println("Ingrese el nombre del producto que desea eliminar:");
+                        String nombreProductoEliminar = scan.nextLine();
+                        Producto productoEliminar = obtenerProductoEnCarritoPorNombre(carrito, nombreProductoEliminar);
+                        if (productoEliminar != null) {
+                            carrito.eliminarProducto(productoEliminar);
+                        } else {
+                            System.out.println("Producto no encontrado en el carrito.");
+                        }
+                    }
+                    break;
+                case 0:
+                    System.out.println("Saliendo del menú.");
+                    salir = true;
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+                    break;
+            }
+        } while (!salir);
     }
 
-    if (pagoExitoso) {
-        // Actualizar el stock y vaciar el carrito
+    public static void realizarCompraSinUsuario(Carrito carrito, String sucursal) {
+        List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
+        // Verificar el stock antes de realizar la compra
         for (Map.Entry<Producto, Integer> entry : carrito.getProductosEnCarrito().entrySet()) {
             Producto productoEnCarrito = entry.getKey();
             int cantidadEnCarrito = entry.getValue();
+            int stockDisponible = carrito.obtenerStockDisponible(productoEnCarrito, sucursal);
 
-            // Encontrar el producto correspondiente en la lista original
-            Producto productoOriginal = listaProductos.stream()
-                    .filter(p -> p.getNombre().equalsIgnoreCase(productoEnCarrito.getNombre()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (productoOriginal != null) {
-                // Actualizar el stock según la sucursal
-                switch (sucursal.toLowerCase()) {
-                    case "norte":
-                        productoOriginal.setStockNorte(productoOriginal.getStockNorte() - cantidadEnCarrito);
-                        break;
-                    case "sur":
-                        productoOriginal.setStockSur(productoOriginal.getStockSur() - cantidadEnCarrito);
-                        break;
-                    case "centro":
-                        productoOriginal.setStockCentro(productoOriginal.getStockCentro() - cantidadEnCarrito);
-                        break;
-                }
+            if (cantidadEnCarrito > stockDisponible) {
+                System.out.println("No hay suficiente stock para el producto '" + productoEnCarrito.getNombre() + "'.");
+                System.out.println("Stock disponible: " + stockDisponible);
+                System.out.println("Compra cancelada.");
+                return;
             }
         }
-        generarTicketVirtual(carrito, null, sucursal);
-        // Guardar los cambios en el archivo
-        Producto.guardarProductosEnArchivo(listaProductos);
-        // Vaciar el carrito
-        carrito.getProductosEnCarrito().clear();
-    } else {
-        System.out.println("Compra cancelada debido a un problema con el pago.");
+        // Solicitar forma de pago
+        System.out.println("Seleccione la forma de pago:");
+        System.out.println("1. Efectivo");
+        System.out.println("2. Tarjeta de Crédito o Débito");
+
+        Scanner scan = new Scanner(System.in);
+        int opcionFormaPago = scan.nextInt();
+        scan.nextLine(); // Consumir la nueva línea pendiente después del nextInt
+        // Realizar el pago
+        boolean pagoExitoso = false;
+        switch (opcionFormaPago) {
+            case 1:
+                pagoExitoso = realizarPagoEfectivo();
+                break;
+            case 2:
+                if (Usuario.realizarPagoConTarjeta()) {
+                        // Preguntar si se requiere factura solo si el pago con tarjeta fue exitoso
+                        System.out.println("¿Desea factura? (s/n)");
+                        String respuestaFacturaTarjeta = scan.nextLine().toLowerCase();
+
+                        if (respuestaFacturaTarjeta.equals("s")) {
+                            // Lógica para solicitar información de factura
+                            Usuario.solicitarInformacionFactura();
+                        }
+                        pagoExitoso = true;
+                        break;
+                    } else {
+                        System.out.println("Pago con tarjeta cancelado. Se debe seleccionar otra forma de pago.");
+                        break;
+                    }
+            default:
+                System.out.println("Opción de forma de pago no válida.");
+                break;
+        }
+
+        if (pagoExitoso) {
+            // Actualizar el stock y vaciar el carrito
+            for (Map.Entry<Producto, Integer> entry : carrito.getProductosEnCarrito().entrySet()) {
+                Producto productoEnCarrito = entry.getKey();
+                int cantidadEnCarrito = entry.getValue();
+
+                // Encontrar el producto correspondiente en la lista original
+                Producto productoOriginal = listaProductos.stream()
+                        .filter(p -> p.getNombre().equalsIgnoreCase(productoEnCarrito.getNombre()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (productoOriginal != null) {
+                    // Actualizar el stock según la sucursal
+                    switch (sucursal.toLowerCase()) {
+                        case "norte":
+                            productoOriginal.setStockNorte(productoOriginal.getStockNorte() - cantidadEnCarrito);
+                            break;
+                        case "sur":
+                            productoOriginal.setStockSur(productoOriginal.getStockSur() - cantidadEnCarrito);
+                            break;
+                        case "centro":
+                            productoOriginal.setStockCentro(productoOriginal.getStockCentro() - cantidadEnCarrito);
+                            break;
+                    }
+                }
+            }
+            generarTicketVirtual(carrito, null, sucursal);
+            // Guardar los cambios en el archivo
+            Producto.guardarProductosEnArchivo(listaProductos);
+            // Vaciar el carrito
+            carrito.getProductosEnCarrito().clear();
+        } else {
+            System.out.println("Compra cancelada debido a un problema con el pago.");
+        }
     }
-}
-
-private static boolean realizarPagoEfectivo() {
-    // Lógica para pago en efectivo
-    System.out.println("Pago en efectivo realizado con éxito.");
-    return true;
-}
-
+    
+    private static boolean realizarPagoEfectivo() {
+        // Lógica para pago en efectivo
+        System.out.println("Pago en efectivo realizado con éxito.");
+        return true;
+    }
 
 }
+
+
