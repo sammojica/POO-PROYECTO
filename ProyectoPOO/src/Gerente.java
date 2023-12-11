@@ -279,8 +279,45 @@ public class Gerente extends Empleado {
                         break;
                     }
                 }
-
+                
                 RegistroSolicitud.guardarSolicitudesEnArchivo(solicitudesPendientes);
+                
+                Producto producto = Producto.buscarProductoEnSucursal(nuevaSolicitud.getNombreProducto(), nuevaSolicitud.getSucursal());
+
+                // Mostrar la cantidad actual de productos en la sucursal
+                int stockActual = Producto.obtenerStockSegunSucursal(producto, nuevaSolicitud.getSucursal());
+                System.out.println("Cantidad actual de productos en la sucursal " + nuevaSolicitud.getSucursal() + ": " + stockActual);
+
+                int nuevaCantidad = nuevaSolicitud.getStock();
+
+                // Actualizar el stock según la sucursal especificada
+                switch (nuevaSolicitud.getSucursal().toLowerCase()) {
+                        case "norte":
+                            producto.setStockNorte(nuevaCantidad);
+                            break;
+                        case "sur":
+                            producto.setStockSur(nuevaCantidad);
+                            break;
+                        case "centro":
+                            producto.setStockCentro(nuevaCantidad);
+                            break;
+                        default:
+                            System.out.println("Sucursal no válida. No se actualizó el stock.");
+                            return null;
+                }
+                
+                // Guardar la lista actualizada en el archivo
+                List<Producto> listaProductos = Producto.leerProductosDesdeArchivo();
+                for (int i = 0; i < listaProductos.size(); i++) {
+                    if (listaProductos.get(i).getNombre().equalsIgnoreCase(nuevaSolicitud.getNombreProducto())) {
+                        listaProductos.set(i, producto);
+                        Producto.guardarProductosEnArchivo(listaProductos);
+                        System.out.println("Stock actualizado correctamente en la sucursal " + nuevaSolicitud.getSucursal() + ".");
+                    }
+                    //System.out.println("Error al actualizar el stock. El producto no se encuentra en la lista.");
+                }
+                
+                
                 return nuevaSolicitud;
             } else {
                 System.out.println("No se pudo crear la solicitud de actualización de stock.");
@@ -321,7 +358,8 @@ public class Gerente extends Empleado {
                 solicitud.getSucursal());
 
         // Comparar con el límite de stock (50 en este caso)
-        return (stockActual+solicitud.getStock()) < 100;
+        return (stockActual) < 100;
+        //return (stockActual+solicitud.getStock()) < 100;
     }
    
    
