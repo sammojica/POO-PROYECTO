@@ -361,9 +361,10 @@ public class Gerente extends Empleado {
     
     public static void menuReporteVentas(Gerente gerente) {
         Scanner scan = new Scanner(System.in);
-        int op;
+        int op=0;
 
         do {
+            try{
             System.out.println("\n\nReporte de Ventas");
             System.out.println("1. Por Tienda");
             System.out.println("2. Por Producto");
@@ -400,6 +401,10 @@ public class Gerente extends Empleado {
                     System.out.println("\nOpción inválida. Intente de nuevo.");
                     break;
             }
+            }catch (InputMismatchException e) {
+                    System.out.println("\nOpción inválida. Intente de nuevo.");
+                    scan.nextLine(); 
+           } 
 
         } while (op != 4);
     }

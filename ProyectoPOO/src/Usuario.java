@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -188,9 +189,10 @@ public class Usuario extends Persona {
 
     public static void menu(Usuario usuario) {
         Scanner scan = new Scanner(System.in);
-        int op;
+        int op=0;
 
         do {
+            try{
             System.out.println("\n\nBienvenido a la SUPER Tienda FI");
             System.out.println("1. Buscar producto.");
             System.out.println("2. Ver carrito.");
@@ -221,6 +223,10 @@ public class Usuario extends Persona {
                     System.out.println("Opción inválida.");
                     break;
             }
+            }catch (InputMismatchException e) {
+                    System.out.println("\nOpción inválida. Intente de nuevo.");
+                    scan.nextLine(); 
+           } 
         } while (op != 5);
 
     }

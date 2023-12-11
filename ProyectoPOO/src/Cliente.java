@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Cliente {
@@ -23,6 +24,7 @@ public class Cliente {
         } while (!sucursaltemp.equals("norte") && !sucursaltemp.equals("sur") && !sucursaltemp.equals("centro"));
 
         while (true) {
+            try{
             System.out.println("1. Buscar producto.");
             System.out.println("2. Ver carrito.");
             System.out.println("3. Salir");
@@ -41,6 +43,10 @@ public class Cliente {
                     System.out.println("Opción inválida.");
                     break;
             }
+            }catch (InputMismatchException e) {
+                System.out.println("\nOpción inválida. Intente de nuevo.");
+                scan.nextLine(); 
+            } 
         }
     }
 

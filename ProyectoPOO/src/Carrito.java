@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -98,6 +99,7 @@ public class Carrito {
         Scanner scan = new Scanner(System.in);
         boolean salir = false;
         do {
+            try{
             System.out.println("**Contenido del Carrito**");
             for (Map.Entry<Producto, Integer> entry : carrito.getProductosEnCarrito().entrySet()) {
                 Producto producto = entry.getKey();
@@ -170,6 +172,11 @@ public class Carrito {
                     System.out.println("Opción no válida.");
                     break;
             }
+            }catch (InputMismatchException e) {
+                System.out.println("\nOpción inválida. Intente de nuevo.");
+                scan.nextLine(); 
+            } 
+            
         } while (!salir);
     }
     
@@ -414,6 +421,7 @@ public class Carrito {
         Scanner scan = new Scanner(System.in);
         boolean salir = false;
         do {
+            try{
             System.out.println("**Contenido del Carrito**");
             for (Map.Entry<Producto, Integer> entry : carrito.getProductosEnCarrito().entrySet()) {
                 Producto producto = entry.getKey();
@@ -485,6 +493,10 @@ public class Carrito {
                     System.out.println("Opción no válida.");
                     break;
             }
+            }catch (InputMismatchException e) {
+                System.out.println("\nOpción inválida. Intente de nuevo.");
+                scan.nextLine(); 
+            } 
         } while (!salir);
     }
 

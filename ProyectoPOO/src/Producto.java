@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Producto {
-
     public String nombre;
     public int codigoProducto;
     public double precio;

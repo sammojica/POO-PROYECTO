@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -52,9 +53,10 @@ public class Empleado extends Persona {
 
     public static void menu(Empleado empleado) {
         Scanner scan = new Scanner(System.in);
-        int op;
+        int op=0;
 
         do {
+            try{
             System.out.println("\n\nBienvenido empleado " +empleado.getApellidos()+ " "+empleado.getNombre());
             System.out.println("1. Actualizar stock.");
             System.out.println("2. Actualizar información personal.");
@@ -78,6 +80,10 @@ public class Empleado extends Persona {
                     System.out.println("Opción inválida.");
                     break;
             }
+            }catch (InputMismatchException e) {
+                System.out.println("\nOpción inválida. Intente de nuevo.");
+                scan.nextLine(); 
+            } 
         } while (op != 4);
     }
 
